@@ -1,0 +1,1405 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aplikasi Agen BRILink - Akun Stok Manual</title>
+  <style>
+
+    :root {
+      --bg: #f4f7fb;
+      --panel: #ffffff;
+      --text: #172033;
+      --muted: #667085;
+      --line: #e6eaf0;
+      --primary: #155eef;
+      --primary-dark: #0f46b8;
+      --success: #027a48;
+      --warning: #b54708;
+      --danger: #b42318;
+      --soft-blue: #eef4ff;
+      --shadow: 0 18px 40px rgba(16, 24, 40, 0.08);
+      --radius: 18px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+    button, input, select, textarea { font: inherit; }
+    .app-shell { display: flex; min-height: 100vh; }
+    .sidebar {
+      width: 280px;
+      background: #0b1220;
+      color: #fff;
+      padding: 22px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .brand-mark {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      font-size: 22px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #155eef, #5b8def);
+    }
+    .brand h1 { margin: 0; font-size: 18px; }
+    .brand p { margin: 3px 0 0; font-size: 12px; color: #b8c3d7; }
+    nav { display: grid; gap: 8px; }
+    .nav-btn {
+      width: 100%;
+      border: 0;
+      border-radius: 12px;
+      padding: 12px 14px;
+      text-align: left;
+      color: #c7d2e4;
+      background: transparent;
+      cursor: pointer;
+      transition: .18s ease;
+      font-weight: 700;
+    }
+    .nav-btn:hover, .nav-btn.active { background: #18243a; color: #fff; }
+    .side-note {
+      margin-top: auto;
+      padding: 14px;
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 16px;
+      background: rgba(255,255,255,.05);
+      display: grid;
+      gap: 6px;
+      font-size: 12px;
+      color: #c7d2e4;
+      line-height: 1.45;
+    }
+    .main { flex: 1; min-width: 0; padding: 26px; }
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+      margin-bottom: 22px;
+    }
+    .eyebrow { margin: 0 0 4px; font-size: 12px; color: var(--muted); font-weight: 800; text-transform: uppercase; letter-spacing: .08em; }
+    h2, h3, h4 { margin: 0; }
+    .top-actions, .form-actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+    .btn {
+      border: 0;
+      border-radius: 12px;
+      padding: 11px 16px;
+      cursor: pointer;
+      font-weight: 800;
+      transition: .18s ease;
+    }
+    .btn.primary { background: var(--primary); color: #fff; }
+    .btn.primary:hover { background: var(--primary-dark); }
+    .btn.secondary { background: #e9eef7; color: #22324d; }
+    .btn.danger { background: var(--danger); color: #fff; }
+    .btn.ghost { background: #fff1f0; color: var(--danger); }
+    .link-btn { background: transparent; border: 0; color: var(--primary); font-weight: 800; cursor: pointer; }
+    .page { display: none; }
+    .page.active { display: block; }
+    .cards { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin-bottom: 18px; }
+    .card, .panel, .setting-card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+    .card { padding: 18px; display: grid; gap: 6px; }
+    .card span { font-size: 12px; color: var(--muted); font-weight: 800; text-transform: uppercase; }
+    .card strong { font-size: 28px; line-height: 1.1; }
+    .card small { color: var(--muted); }
+    .card.success strong { color: var(--success); }
+    .card.warning strong { color: var(--warning); }
+    .grid { display: grid; gap: 16px; }
+    .grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .panel { padding: 18px; margin-bottom: 16px; }
+    .panel-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .panel-head p { margin: 4px 0 0; color: var(--muted); font-size: 13px; }
+    .form-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 14px; }
+    .form-grid.one { grid-template-columns: 1fr; }
+    label { display: grid; gap: 6px; color: #344054; font-weight: 800; font-size: 13px; }
+    input, select, textarea {
+      border: 1px solid #d0d5dd;
+      border-radius: 12px;
+      padding: 11px 12px;
+      background: #fff;
+      outline: none;
+      color: var(--text);
+    }
+    input:focus, select:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(21,94,239,.12); }
+    .wide { grid-column: 1 / -1; }
+    .impact-box, .physical-preview {
+      margin-top: 14px;
+      padding: 14px;
+      border-radius: 14px;
+      background: var(--soft-blue);
+      color: #1849a9;
+      font-weight: 700;
+      line-height: 1.55;
+      border: 1px solid #c7d7fe;
+    }
+    .account-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; }
+    .account-card {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 14px;
+      background: #fbfcff;
+      display: grid;
+      gap: 6px;
+    }
+    .account-card strong { font-size: 18px; }
+    .account-card span { color: var(--muted); font-size: 12px; }
+    .table-wrap { width: 100%; overflow: auto; border: 1px solid var(--line); border-radius: 14px; }
+    .table-wrap.mini { max-height: 360px; }
+    table { width: 100%; border-collapse: collapse; background: #fff; min-width: 780px; }
+    th, td { padding: 12px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; font-size: 13px; }
+    th { background: #f8fafc; color: #475467; font-size: 12px; text-transform: uppercase; letter-spacing: .03em; }
+    tr:last-child td { border-bottom: 0; }
+    .badge { display: inline-flex; padding: 4px 8px; border-radius: 999px; font-weight: 800; font-size: 11px; background: #eef4ff; color: #1849a9; }
+    .badge.success { background: #ecfdf3; color: #027a48; }
+    .badge.warn { background: #fff7ed; color: #b54708; }
+    .badge.danger { background: #fef3f2; color: #b42318; }
+    .row-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+    .mini-btn { border: 0; padding: 7px 10px; border-radius: 9px; cursor: pointer; font-weight: 800; font-size: 12px; background: #eef4ff; color: var(--primary); }
+    .mini-btn.danger { background: #fef3f2; color: var(--danger); }
+    .rules { color: #475467; line-height: 1.65; }
+    .rules.compact p { margin: 0 0 10px; }
+    .filters { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px; margin-bottom: 14px; }
+    .summary-line { display: flex; gap: 18px; flex-wrap: wrap; margin-bottom: 12px; color: var(--muted); }
+    .settings-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+    .setting-card { padding: 18px; display: grid; gap: 10px; }
+    .setting-card p { color: var(--muted); margin: 0; }
+    .danger-zone { border-color: #fecaca; }
+    .toast {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      background: #101828;
+      color: #fff;
+      padding: 13px 16px;
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      opacity: 0;
+      transform: translateY(12px);
+      pointer-events: none;
+      transition: .2s ease;
+      z-index: 100;
+      font-weight: 800;
+      max-width: min(420px, calc(100vw - 36px));
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    .empty { padding: 18px; color: var(--muted); text-align: center; }
+    .money-pos { color: var(--success); font-weight: 900; }
+    .money-neg { color: var(--danger); font-weight: 900; }
+    @media (max-width: 980px) {
+      .app-shell { display: block; }
+      .sidebar { width: 100%; height: auto; position: relative; }
+      nav { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .main { padding: 16px; }
+      .cards, .grid.two, .settings-grid, .filters, .form-grid, .account-grid { grid-template-columns: 1fr; }
+      .topbar { align-items: flex-start; flex-direction: column; }
+    }
+    @media print {
+      .sidebar, .topbar, .filters, .top-actions, .form-actions, .row-actions, button { display: none !important; }
+      .main { padding: 0; }
+      .panel, .card { box-shadow: none; border: 1px solid #ddd; }
+      body { background: #fff; }
+    }
+
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">B</div>
+        <div>
+          <h1>Agen BRILink</h1>
+          <p>Transaksi & Akun Stok Manual</p>
+        </div>
+      </div>
+
+      <nav>
+        <button class="nav-btn active" data-target="dashboard">Dashboard</button>
+        <button class="nav-btn" data-target="transaksi">Input Transaksi</button>
+        <button class="nav-btn" data-target="transaksi-fisik">Transaksi Fisik</button>
+        <button class="nav-btn" data-target="akun">Akun Stok</button>
+        <button class="nav-btn" data-target="mutasi">Mutasi Stok</button>
+        <button class="nav-btn" data-target="laporan">Laporan</button>
+        <button class="nav-btn" data-target="pengaturan">Pengaturan</button>
+      </nav>
+
+      <div class="side-note">
+        <strong>Mode Manual</strong>
+        <span>Tambahkan akun stok sesuai kebutuhan: kas, saldo bank, e-wallet, pulsa, voucher fisik, aksesoris, dan barang lainnya.</span>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Aplikasi pencatatan internal</p>
+          <h2 id="pageTitle">Dashboard</h2>
+        </div>
+        <div class="top-actions">
+          <button class="btn secondary" id="exportJsonTopBtn">Backup JSON</button>
+          <button class="btn primary" onclick="window.print()">Cetak</button>
+        </div>
+      </header>
+
+      <section id="dashboard" class="page active">
+        <div class="cards">
+          <article class="card">
+            <span>Total Transaksi</span>
+            <strong id="statTotalTransaksi">0</strong>
+            <small>Semua transaksi tersimpan</small>
+          </article>
+          <article class="card">
+            <span>Omzet Berhasil</span>
+            <strong id="statOmzet">Rp0</strong>
+            <small>Akumulasi nominal transaksi</small>
+          </article>
+          <article class="card success">
+            <span>Laba Admin</span>
+            <strong id="statLaba">Rp0</strong>
+            <small>Total biaya admin berhasil</small>
+          </article>
+          <article class="card warning">
+            <span>Total Nilai Akun</span>
+            <strong id="statTotalAkun">Rp0</strong>
+            <small>Seluruh akun stok/saldo</small>
+          </article>
+        </div>
+
+        <div class="grid two">
+          <div class="panel">
+            <div class="panel-head">
+              <div>
+                <h3>Ringkasan Akun Stok</h3>
+                <p>Saldo berjalan berdasarkan saldo awal, mutasi, dan transaksi.</p>
+              </div>
+              <button class="link-btn" data-jump="akun">Kelola Akun</button>
+            </div>
+            <div id="dashAccountGrid" class="account-grid"></div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head">
+              <div>
+                <h3>Transaksi Terbaru</h3>
+                <p>Data terbaru yang dicatat di aplikasi.</p>
+              </div>
+              <button class="link-btn" data-jump="laporan">Lihat Semua</button>
+            </div>
+            <div class="table-wrap mini">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Tanggal</th>
+                    <th>Jenis</th>
+                    <th>Nominal</th>
+                    <th>Admin</th>
+                  </tr>
+                </thead>
+                <tbody id="recentRows"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="transaksi" class="page">
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <h3>Input Transaksi Baru</h3>
+              <p>Pilih akun keluar, akun masuk, dan akun penerima admin secara manual.</p>
+            </div>
+          </div>
+
+          <form id="transactionForm" class="form-grid">
+            <label>
+              Tanggal
+              <input type="date" id="tanggal" required />
+            </label>
+
+            <label>
+              Jenis Transaksi
+              <select id="jenis" required>
+                <option value="Setor Tunai">Setor Tunai</option>
+                <option value="Tarik Tunai">Tarik Tunai</option>
+                <option value="Transfer BRI">Transfer BRI</option>
+                <option value="Transfer Bank Lain">Transfer Bank Lain</option>
+                <option value="Pembelian Pulsa">Pembelian Pulsa</option>
+                <option value="Token PLN">Token PLN</option>
+                <option value="Top Up E-Wallet">Top Up E-Wallet</option>
+                <option value="BPJS/PDAM">BPJS/PDAM</option>
+                <option value="Voucher Fisik">Voucher Fisik</option>
+                <option value="Aksesoris HP">Aksesoris HP</option>
+                <option value="Kartu Perdana">Kartu Perdana</option>
+                <option value="Barang Toko Lainnya">Barang Toko Lainnya</option>
+                <option value="Lainnya">Lainnya</option>
+              </select>
+            </label>
+
+            <label>
+              Nama Pelanggan
+              <input type="text" id="pelanggan" placeholder="Contoh: Bapak Andi" />
+            </label>
+
+            <label>
+              Nomor Rekening/HP/Tujuan
+              <input type="text" id="tujuan" placeholder="Contoh: 08xxxx / 1234xxxx" />
+            </label>
+
+            <label>
+              Nominal Transaksi
+              <input type="number" id="nominal" min="0" step="100" placeholder="50000" required />
+            </label>
+
+            <label>
+              Biaya Admin
+              <input type="number" id="admin" min="0" step="100" placeholder="3000" required />
+            </label>
+
+            <label>
+              Akun Keluar Nominal
+              <select id="akunKeluar"></select>
+            </label>
+
+            <label>
+              Akun Masuk Nominal
+              <select id="akunMasuk"></select>
+            </label>
+
+            <label>
+              Akun Penerima Admin
+              <select id="akunAdmin"></select>
+            </label>
+
+            <label>
+              Status
+              <select id="status">
+                <option value="Berhasil">Berhasil</option>
+                <option value="Pending">Pending</option>
+                <option value="Gagal">Gagal</option>
+              </select>
+            </label>
+
+            <label class="wide">
+              Catatan
+              <textarea id="catatan" rows="3" placeholder="Catatan tambahan, nomor referensi, atau keterangan lain"></textarea>
+            </label>
+
+            <div class="form-actions wide">
+              <button type="button" class="btn secondary" id="autoAccountBtn">Isi Akun Otomatis</button>
+              <button type="reset" class="btn secondary">Reset</button>
+              <button type="submit" class="btn primary">Simpan Transaksi</button>
+            </div>
+          </form>
+
+          <div id="impactInfo" class="impact-box"></div>
+        </div>
+      </section>
+
+
+      <section id="transaksi-fisik" class="page">
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <h3>Transaksi Fisik: Voucher, Aksesoris, dan Barang Lainnya</h3>
+              <p>Gunakan halaman ini untuk penjualan barang fisik. Sistem menghitung total modal, harga jual, laba, stok keluar, dan kas masuk.</p>
+            </div>
+          </div>
+
+          <form id="physicalForm" class="form-grid">
+            <label>
+              Tanggal
+              <input type="date" id="fisikTanggal" required />
+            </label>
+            <label>
+              Kategori Barang
+              <select id="fisikKategori" required>
+                <option value="Voucher Fisik">Voucher Fisik</option>
+                <option value="Aksesoris HP">Aksesoris HP</option>
+                <option value="Kartu Perdana">Kartu Perdana</option>
+                <option value="Sparepart/Service">Sparepart/Service</option>
+                <option value="Barang Toko Lainnya">Barang Toko Lainnya</option>
+              </select>
+            </label>
+            <label>
+              Nama Barang
+              <input type="text" id="fisikNamaBarang" placeholder="Contoh: Voucher Telkomsel 10GB / Charger Type-C" required />
+            </label>
+            <label>
+              Nama Pembeli
+              <input type="text" id="fisikPelanggan" placeholder="Contoh: Ibu Sari" />
+            </label>
+            <label>
+              Jumlah / Qty
+              <input type="number" id="fisikQty" min="1" step="1" value="1" required />
+            </label>
+            <label>
+              Modal per Unit
+              <input type="number" id="fisikModal" min="0" step="100" placeholder="8000" required />
+            </label>
+            <label>
+              Harga Jual per Unit
+              <input type="number" id="fisikJual" min="0" step="100" placeholder="10000" required />
+            </label>
+            <label>
+              Akun Stok/Barang Keluar
+              <select id="fisikAkunStok" required></select>
+            </label>
+            <label>
+              Akun Kas/Saldo Masuk
+              <select id="fisikAkunKas" required></select>
+            </label>
+            <label>
+              Status
+              <select id="fisikStatus">
+                <option value="Berhasil">Berhasil</option>
+                <option value="Pending">Pending</option>
+                <option value="Gagal">Gagal</option>
+              </select>
+            </label>
+            <label class="wide">
+              Catatan
+              <textarea id="fisikCatatan" rows="3" placeholder="Contoh: warna hitam, nomor voucher, garansi, atau catatan lain"></textarea>
+            </label>
+            <div class="physical-preview wide" id="physicalPreview">Total modal: Rp0 | Total jual: Rp0 | Laba: Rp0</div>
+            <div class="form-actions wide">
+              <button type="button" class="btn secondary" id="autoPhysicalAccountBtn">Isi Akun Fisik Otomatis</button>
+              <button type="reset" class="btn secondary">Reset</button>
+              <button type="submit" class="btn primary">Simpan Transaksi Fisik</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="panel rules">
+          <h3>Logika Transaksi Fisik</h3>
+          <p><strong>Akun Stok/Barang Keluar</strong> berkurang sebesar total modal barang.</p>
+          <p><strong>Akun Kas/Saldo Masuk</strong> bertambah sebesar total harga jual. Di laporan, nilai modal dicatat sebagai nominal, sedangkan selisih harga jual dan modal dicatat sebagai laba.</p>
+          <p>Untuk voucher, buat akun stok seperti <strong>Stok Voucher Fisik</strong>. Untuk aksesoris, buat akun stok seperti <strong>Stok Aksesoris</strong>.</p>
+        </div>
+      </section>
+
+      <section id="akun" class="page">
+        <div class="grid two">
+          <div class="panel">
+            <div class="panel-head">
+              <div>
+                <h3>Buat Akun Stok Manual</h3>
+                <p>Contoh: Kas Laci, Saldo DANA, Saldo OVO, Stok Voucher, Stok Pulsa Telkomsel.</p>
+              </div>
+            </div>
+
+            <form id="accountForm" class="form-grid one">
+              <input type="hidden" id="accountEditId" />
+              <label>
+                Nama Akun
+                <input type="text" id="accountName" placeholder="Contoh: Saldo DANA" required />
+              </label>
+              <label>
+                Kategori Akun
+                <select id="accountCategory">
+                  <option value="Kas">Kas</option>
+                  <option value="Saldo Bank/BRILink">Saldo Bank/BRILink</option>
+                  <option value="E-Wallet">E-Wallet</option>
+                  <option value="Pulsa/Voucher">Pulsa/Voucher</option>
+                  <option value="Stok Voucher Fisik">Stok Voucher Fisik</option>
+                  <option value="Stok Aksesoris">Stok Aksesoris</option>
+                  <option value="Stok Barang Lainnya">Stok Barang Lainnya</option>
+                  <option value="Lainnya">Lainnya</option>
+                </select>
+              </label>
+              <label>
+                Saldo Awal
+                <input type="number" id="accountInitial" min="0" step="100" placeholder="0" />
+              </label>
+              <label>
+                Role Otomatis
+                <select id="accountRole">
+                  <option value="custom">Custom / Manual</option>
+                  <option value="cash">Kas Utama</option>
+                  <option value="brilink">Saldo BRILink Utama</option>
+                  <option value="pulsa">Stok Pulsa Utama</option>
+                  <option value="wallet">Saldo E-Wallet Utama</option>
+                  <option value="voucher">Stok Voucher Fisik Utama</option>
+                  <option value="accessory">Stok Aksesoris Utama</option>
+                  <option value="physical">Stok Barang Fisik Lainnya</option>
+                </select>
+              </label>
+              <label>
+                Catatan Akun
+                <input type="text" id="accountNote" placeholder="Opsional" />
+              </label>
+              <div class="form-actions">
+                <button type="button" class="btn secondary" id="cancelAccountEditBtn">Batal Edit</button>
+                <button type="submit" class="btn primary" id="saveAccountBtn">Simpan Akun</button>
+              </div>
+            </form>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head">
+              <div>
+                <h3>Panduan Role Otomatis</h3>
+                <p>Role dipakai untuk membantu pengisian akun pada transaksi.</p>
+              </div>
+            </div>
+            <div class="rules compact">
+              <p><strong>Kas Utama:</strong> akun yang menerima uang tunai dan biaya admin.</p>
+              <p><strong>Saldo BRILink Utama:</strong> akun saldo bank/EDC yang dipakai untuk transfer, setor tunai, PLN, BPJS, dan layanan sejenis.</p>
+              <p><strong>Stok Pulsa Utama:</strong> akun yang berkurang saat pembelian pulsa.</p>
+              <p><strong>Saldo E-Wallet Utama:</strong> akun yang berkurang saat top up e-wallet.</p>
+              <p><strong>Stok Voucher Fisik Utama:</strong> akun yang berkurang saat transaksi voucher fisik.</p>
+              <p><strong>Stok Aksesoris Utama:</strong> akun yang berkurang saat transaksi aksesoris HP.</p>
+              <p><strong>Stok Barang Fisik Lainnya:</strong> akun stok untuk barang toko selain voucher dan aksesoris.</p>
+              <p><strong>Custom:</strong> akun bebas, dipilih manual saat transaksi atau mutasi stok.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <h3>Daftar Akun Stok</h3>
+              <p>Saldo berjalan akan berubah otomatis setelah transaksi dan mutasi stok.</p>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Nama Akun</th>
+                  <th>Kategori</th>
+                  <th>Role</th>
+                  <th>Saldo Awal</th>
+                  <th>Saldo Berjalan</th>
+                  <th>Catatan</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="accountRows"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="mutasi" class="page">
+        <div class="grid two">
+          <div class="panel">
+            <div class="panel-head">
+              <div>
+                <h3>Tambah/Kurangi Stok Manual</h3>
+                <p>Gunakan untuk isi ulang saldo, tambah kas, koreksi stok, atau penyesuaian fisik.</p>
+              </div>
+            </div>
+
+            <form id="adjustmentForm" class="form-grid one">
+              <label>
+                Tanggal
+                <input type="date" id="adjTanggal" required />
+              </label>
+              <label>
+                Akun Stok
+                <select id="adjAccount" required></select>
+              </label>
+              <label>
+                Tipe Mutasi
+                <select id="adjType">
+                  <option value="tambah">Tambah</option>
+                  <option value="kurang">Kurangi</option>
+                </select>
+              </label>
+              <label>
+                Nominal
+                <input type="number" id="adjAmount" min="0" step="100" required />
+              </label>
+              <label>
+                Keterangan
+                <input type="text" id="adjNote" placeholder="Contoh: isi ulang saldo DANA" />
+              </label>
+              <button type="submit" class="btn primary">Simpan Mutasi</button>
+            </form>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head">
+              <div>
+                <h3>Transfer Antar Akun</h3>
+                <p>Pindahkan nilai dari satu akun stok ke akun lain, misalnya kas tunai menjadi saldo BRILink.</p>
+              </div>
+            </div>
+
+            <form id="transferForm" class="form-grid one">
+              <label>
+                Tanggal
+                <input type="date" id="transferTanggal" required />
+              </label>
+              <label>
+                Dari Akun
+                <select id="transferFrom" required></select>
+              </label>
+              <label>
+                Ke Akun
+                <select id="transferTo" required></select>
+              </label>
+              <label>
+                Nominal
+                <input type="number" id="transferAmount" min="0" step="100" required />
+              </label>
+              <label>
+                Keterangan
+                <input type="text" id="transferNote" placeholder="Contoh: isi saldo BRILink dari kas" />
+              </label>
+              <button type="submit" class="btn primary">Simpan Transfer Akun</button>
+            </form>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <h3>Riwayat Mutasi Stok</h3>
+              <p>Termasuk tambah, kurang, dan transfer antar akun.</p>
+            </div>
+            <button class="btn danger ghost" id="clearAdjustmentsBtn">Hapus Mutasi</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Tanggal</th>
+                  <th>Akun</th>
+                  <th>Tipe</th>
+                  <th>Nominal</th>
+                  <th>Keterangan</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="adjustmentRows"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="laporan" class="page">
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <h3>Laporan Transaksi</h3>
+              <p>Filter transaksi berdasarkan tanggal, jenis, status, pelanggan, atau akun.</p>
+            </div>
+            <div class="top-actions">
+              <button class="btn secondary" id="exportCsvBtn">Export CSV</button>
+              <button class="btn danger ghost" id="clearTransactionsBtn">Hapus Semua</button>
+            </div>
+          </div>
+
+          <div class="filters">
+            <input type="date" id="filterStart" />
+            <input type="date" id="filterEnd" />
+            <select id="filterJenis">
+              <option value="">Semua Jenis</option>
+              <option value="Setor Tunai">Setor Tunai</option>
+              <option value="Tarik Tunai">Tarik Tunai</option>
+              <option value="Transfer BRI">Transfer BRI</option>
+              <option value="Transfer Bank Lain">Transfer Bank Lain</option>
+              <option value="Pembelian Pulsa">Pembelian Pulsa</option>
+              <option value="Token PLN">Token PLN</option>
+              <option value="Top Up E-Wallet">Top Up E-Wallet</option>
+              <option value="BPJS/PDAM">BPJS/PDAM</option>
+              <option value="Voucher Fisik">Voucher Fisik</option>
+              <option value="Aksesoris HP">Aksesoris HP</option>
+              <option value="Kartu Perdana">Kartu Perdana</option>
+              <option value="Barang Toko Lainnya">Barang Toko Lainnya</option>
+              <option value="Lainnya">Lainnya</option>
+            </select>
+            <select id="filterStatus">
+              <option value="">Semua Status</option>
+              <option value="Berhasil">Berhasil</option>
+              <option value="Pending">Pending</option>
+              <option value="Gagal">Gagal</option>
+            </select>
+            <select id="filterAccount">
+              <option value="">Semua Akun</option>
+            </select>
+            <input type="search" id="filterSearch" placeholder="Cari pelanggan/tujuan/catatan" />
+            <button class="btn secondary" id="resetFilterBtn">Reset Filter</button>
+          </div>
+
+          <div class="summary-line">
+            <span>Transaksi tampil: <strong id="reportCount">0</strong></span>
+            <span>Nominal berhasil: <strong id="reportNominal">Rp0</strong></span>
+            <span>Admin berhasil: <strong id="reportAdmin">Rp0</strong></span>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Tanggal</th>
+                  <th>Jenis</th>
+                  <th>Pelanggan</th>
+                  <th>Tujuan</th>
+                  <th>Nominal</th>
+                  <th>Admin</th>
+                  <th>Akun Keluar</th>
+                  <th>Akun Masuk</th>
+                  <th>Akun Admin</th>
+                  <th>Status</th>
+                  <th>Catatan</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="transactionRows"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="pengaturan" class="page">
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <h3>Backup, Restore, dan Reset</h3>
+              <p>Simpan data secara rutin karena aplikasi berjalan secara lokal di browser.</p>
+            </div>
+          </div>
+
+          <div class="settings-grid">
+            <div class="setting-card">
+              <h4>Backup Data</h4>
+              <p>Unduh seluruh transaksi, akun stok, saldo awal, dan mutasi dalam format JSON.</p>
+              <button class="btn primary" id="backupBtn">Download Backup</button>
+            </div>
+            <div class="setting-card">
+              <h4>Restore Data</h4>
+              <p>Upload file JSON hasil backup untuk memulihkan data.</p>
+              <input type="file" id="restoreInput" accept="application/json" />
+            </div>
+            <div class="setting-card danger-zone">
+              <h4>Reset Aplikasi</h4>
+              <p>Menghapus seluruh data di browser ini.</p>
+              <button class="btn danger" id="resetAppBtn">Reset Semua Data</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel rules">
+          <h3>Logika Transaksi Manual</h3>
+          <p><strong>Akun Keluar Nominal:</strong> akun ini dikurangi sebesar nominal transaksi.</p>
+          <p><strong>Akun Masuk Nominal:</strong> akun ini ditambah sebesar nominal transaksi.</p>
+          <p><strong>Akun Penerima Admin:</strong> akun ini ditambah sebesar biaya admin.</p>
+          <p><strong>Status Pending/Gagal:</strong> tidak mengubah akun stok, tetapi tetap tercatat di laporan.</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="toast" class="toast"></div>
+  <script>
+
+  const STORAGE_KEY = "AGEN_BRILINK_STOK_MANUAL_FISIK_V1";
+  const DEFAULT_DATA = {
+    accounts: [],
+    transactions: [],
+    adjustments: [],
+    version: "fisik-1.0"
+  };
+
+  let DATA = loadData();
+
+  const $ = (id) => document.getElementById(id);
+  const rupiah = (value) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(Number(value || 0));
+  const number = (value) => Number(value || 0);
+  const today = () => new Date().toISOString().slice(0, 10);
+  const esc = (str = '') => String(str).replace(/[&<>"']/g, (s) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[s]));
+
+  function loadData() {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      const parsed = saved ? JSON.parse(saved) : structuredClone(DEFAULT_DATA);
+      parsed.accounts = Array.isArray(parsed.accounts) ? parsed.accounts : [];
+      parsed.transactions = Array.isArray(parsed.transactions) ? parsed.transactions : [];
+      parsed.adjustments = Array.isArray(parsed.adjustments) ? parsed.adjustments : [];
+      return parsed;
+    } catch (error) {
+      return structuredClone(DEFAULT_DATA);
+    }
+  }
+
+  function saveData() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA));
+  }
+
+  function uid(prefix) {
+    return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+  }
+
+  function showToast(message) {
+    const toast = $('toast');
+    toast.textContent = message;
+    toast.classList.add('show');
+    clearTimeout(showToast.timer);
+    showToast.timer = setTimeout(() => toast.classList.remove('show'), 2600);
+  }
+
+  function setDefaultDates() {
+    ['tanggal', 'adjTanggal', 'transferTanggal', 'filterEnd', 'fisikTanggal'].forEach(id => {
+      if ($(id) && !$(id).value) $(id).value = today();
+    });
+  }
+
+  function accountName(id) {
+    const account = DATA.accounts.find((a) => a.id === id);
+    return account ? account.name : '-';
+  }
+
+  function getByRole(role) {
+    return DATA.accounts.find((a) => a.role === role)?.id || '';
+  }
+
+  function activeAccounts() {
+    return DATA.accounts.filter((a) => !a.deleted);
+  }
+
+  function computeBalances() {
+    const balances = {};
+    activeAccounts().forEach((account) => {
+      balances[account.id] = number(account.initial);
+    });
+
+    DATA.adjustments.forEach((item) => {
+      if (item.type === 'tambah') balances[item.accountId] = number(balances[item.accountId]) + number(item.amount);
+      if (item.type === 'kurang') balances[item.accountId] = number(balances[item.accountId]) - number(item.amount);
+      if (item.type === 'transfer-out') balances[item.accountId] = number(balances[item.accountId]) - number(item.amount);
+      if (item.type === 'transfer-in') balances[item.accountId] = number(balances[item.accountId]) + number(item.amount);
+    });
+
+    DATA.transactions.forEach((trx) => {
+      if (trx.status !== 'Berhasil') return;
+      if (trx.akunKeluar) balances[trx.akunKeluar] = number(balances[trx.akunKeluar]) - number(trx.nominal);
+      if (trx.akunMasuk) balances[trx.akunMasuk] = number(balances[trx.akunMasuk]) + number(trx.nominal);
+      if (trx.akunAdmin) balances[trx.akunAdmin] = number(balances[trx.akunAdmin]) + number(trx.admin);
+    });
+
+    return balances;
+  }
+
+  function accountOptions(selected = '') {
+    const balances = computeBalances();
+    const options = activeAccounts().map((account) => {
+      const isSelected = selected === account.id ? 'selected' : '';
+      return `<option value="${account.id}" ${isSelected}>${esc(account.name)} — ${rupiah(balances[account.id])}</option>`;
+    }).join('');
+    return `<option value="">Pilih akun</option>${options}`;
+  }
+
+  function refreshSelects() {
+    const selectIds = ['akunKeluar', 'akunMasuk', 'akunAdmin', 'adjAccount', 'transferFrom', 'transferTo', 'filterAccount', 'fisikAkunStok', 'fisikAkunKas'];
+    selectIds.forEach((id) => {
+      const element = $(id);
+      if (!element) return;
+      const current = element.value;
+      if (id === 'filterAccount') {
+        element.innerHTML = `<option value="">Semua Akun</option>` + activeAccounts().map(a => `<option value="${a.id}">${esc(a.name)}</option>`).join('');
+      } else {
+        element.innerHTML = accountOptions(current);
+      }
+      if ([...element.options].some((option) => option.value === current)) element.value = current;
+    });
+  }
+
+  function navigate(target) {
+    document.querySelectorAll('.page').forEach((page) => page.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach((button) => button.classList.remove('active'));
+    const page = $(target);
+    if (page) page.classList.add('active');
+    document.querySelectorAll(`[data-target="${target}"]`).forEach((button) => button.classList.add('active'));
+    const titleMap = {
+      dashboard: 'Dashboard',
+      transaksi: 'Input Transaksi',
+      'transaksi-fisik': 'Transaksi Fisik',
+      akun: 'Akun Stok',
+      mutasi: 'Mutasi Stok',
+      laporan: 'Laporan',
+      pengaturan: 'Pengaturan'
+    };
+    $('pageTitle').textContent = titleMap[target] || 'Dashboard';
+    renderAll();
+  }
+
+  function updateImpactInfo() {
+    const jenis = $('jenis')?.value || '-';
+    const nominal = number($('nominal')?.value);
+    const admin = number($('admin')?.value);
+    const keluar = accountName($('akunKeluar')?.value);
+    const masuk = accountName($('akunMasuk')?.value);
+    const akunAdmin = accountName($('akunAdmin')?.value);
+    const impact = $('impactInfo');
+    if (!impact) return;
+    impact.innerHTML = `<strong>Dampak transaksi ${esc(jenis)}:</strong><br>
+      ${esc(keluar)} berkurang ${rupiah(nominal)}. ${esc(masuk)} bertambah ${rupiah(nominal)}. ${esc(akunAdmin)} menerima admin/laba ${rupiah(admin)}.`;
+  }
+
+  function updatePhysicalPreview() {
+    const qty = Math.max(1, number($('fisikQty')?.value));
+    const modal = number($('fisikModal')?.value);
+    const jual = number($('fisikJual')?.value);
+    const totalModal = qty * modal;
+    const totalJual = qty * jual;
+    const laba = totalJual - totalModal;
+    const preview = $('physicalPreview');
+    if (preview) preview.textContent = `Total modal: ${rupiah(totalModal)} | Total jual: ${rupiah(totalJual)} | Laba: ${rupiah(laba)}`;
+  }
+
+  function renderDashboard() {
+    const balances = computeBalances();
+    const successful = DATA.transactions.filter((trx) => trx.status === 'Berhasil');
+    $('statTotalTransaksi').textContent = DATA.transactions.length;
+    $('statOmzet').textContent = rupiah(successful.reduce((sum, trx) => sum + number(trx.nominal) + number(trx.admin), 0));
+    $('statLaba').textContent = rupiah(successful.reduce((sum, trx) => sum + number(trx.admin), 0));
+    $('statTotalAkun').textContent = rupiah(activeAccounts().reduce((sum, account) => sum + number(balances[account.id]), 0));
+
+    $('dashAccountGrid').innerHTML = activeAccounts().length
+      ? activeAccounts().map((account) => `<div class="account-card"><span>${esc(account.category)} • ${esc(roleLabel(account.role))}</span><strong>${esc(account.name)}</strong><b>${rupiah(balances[account.id])}</b></div>`).join('')
+      : `<div class="empty">Belum ada akun stok. Buat akun kas, saldo BRILink, stok voucher, atau stok aksesoris terlebih dahulu.</div>`;
+
+    $('recentRows').innerHTML = DATA.transactions.slice(0, 8).map((trx) => `
+      <tr>
+        <td>${esc(trx.tanggal)}</td>
+        <td><span class="badge ${trx.mode === 'fisik' ? 'warn' : ''}">${esc(trx.jenis)}</span></td>
+        <td>${rupiah(number(trx.nominal) + number(trx.admin))}</td>
+        <td>${rupiah(trx.admin)}</td>
+      </tr>`).join('') || `<tr><td colspan="4" class="empty">Belum ada transaksi.</td></tr>`;
+  }
+
+  function roleLabel(role) {
+    const map = {
+      custom: 'Custom',
+      cash: 'Kas Utama',
+      brilink: 'Saldo BRILink',
+      pulsa: 'Stok Pulsa',
+      wallet: 'Saldo E-Wallet',
+      voucher: 'Stok Voucher Fisik',
+      accessory: 'Stok Aksesoris',
+      physical: 'Stok Barang Fisik'
+    };
+    return map[role] || role || 'Custom';
+  }
+
+  function renderAccounts() {
+    const balances = computeBalances();
+    $('accountRows').innerHTML = activeAccounts().map((account) => `
+      <tr>
+        <td><strong>${esc(account.name)}</strong></td>
+        <td>${esc(account.category)}</td>
+        <td><span class="badge">${esc(roleLabel(account.role))}</span></td>
+        <td>${rupiah(account.initial)}</td>
+        <td class="${number(balances[account.id]) < 0 ? 'money-neg' : 'money-pos'}">${rupiah(balances[account.id])}</td>
+        <td>${esc(account.note || '-')}</td>
+        <td><div class="row-actions"><button class="mini-btn" onclick="editAccount('${account.id}')">Edit</button><button class="mini-btn danger" onclick="deleteAccount('${account.id}')">Hapus</button></div></td>
+      </tr>`).join('') || `<tr><td colspan="7" class="empty">Belum ada akun stok.</td></tr>`;
+  }
+
+  function renderAdjustments() {
+    $('adjustmentRows').innerHTML = DATA.adjustments.map((adj) => `
+      <tr>
+        <td>${esc(adj.tanggal)}</td>
+        <td>${esc(accountName(adj.accountId))}</td>
+        <td><span class="badge ${adj.type.includes('out') || adj.type === 'kurang' ? 'danger' : 'success'}">${esc(typeLabel(adj.type))}</span></td>
+        <td>${rupiah(adj.amount)}</td>
+        <td>${esc(adj.note || '-')}</td>
+        <td><button class="mini-btn danger" onclick="deleteAdjustment('${adj.id}')">Hapus</button></td>
+      </tr>`).join('') || `<tr><td colspan="6" class="empty">Belum ada mutasi stok.</td></tr>`;
+  }
+
+  function typeLabel(type) {
+    return {
+      tambah: 'Tambah',
+      kurang: 'Kurangi',
+      'transfer-out': 'Transfer Keluar',
+      'transfer-in': 'Transfer Masuk'
+    }[type] || type;
+  }
+
+  function getFilteredTransactions() {
+    const start = $('filterStart').value;
+    const end = $('filterEnd').value;
+    const jenis = $('filterJenis').value;
+    const status = $('filterStatus').value;
+    const account = $('filterAccount').value;
+    const search = $('filterSearch').value.toLowerCase();
+    return DATA.transactions.filter((trx) => {
+      if (start && trx.tanggal < start) return false;
+      if (end && trx.tanggal > end) return false;
+      if (jenis && trx.jenis !== jenis) return false;
+      if (status && trx.status !== status) return false;
+      if (account && ![trx.akunKeluar, trx.akunMasuk, trx.akunAdmin].includes(account)) return false;
+      const haystack = `${trx.pelanggan} ${trx.tujuan} ${trx.catatan} ${trx.namaBarang}`.toLowerCase();
+      if (search && !haystack.includes(search)) return false;
+      return true;
+    });
+  }
+
+  function renderTransactions() {
+    const list = getFilteredTransactions();
+    const successful = list.filter((trx) => trx.status === 'Berhasil');
+    $('reportCount').textContent = list.length;
+    $('reportNominal').textContent = rupiah(successful.reduce((sum, trx) => sum + number(trx.nominal) + number(trx.admin), 0));
+    $('reportAdmin').textContent = rupiah(successful.reduce((sum, trx) => sum + number(trx.admin), 0));
+    $('transactionRows').innerHTML = list.map((trx) => `
+      <tr>
+        <td>${esc(trx.tanggal)}</td>
+        <td><span class="badge ${trx.mode === 'fisik' ? 'warn' : ''}">${esc(trx.jenis)}</span></td>
+        <td>${esc(trx.pelanggan || '-')}</td>
+        <td>${esc(trx.tujuan || trx.namaBarang || '-')}</td>
+        <td>${rupiah(trx.nominal)}</td>
+        <td>${rupiah(trx.admin)}</td>
+        <td>${esc(accountName(trx.akunKeluar))}</td>
+        <td>${esc(accountName(trx.akunMasuk))}</td>
+        <td>${esc(accountName(trx.akunAdmin))}</td>
+        <td><span class="badge ${trx.status === 'Berhasil' ? 'success' : trx.status === 'Pending' ? 'warn' : 'danger'}">${esc(trx.status)}</span></td>
+        <td>${esc(trx.catatan || '-')}</td>
+        <td><button class="mini-btn danger" onclick="deleteTransaction('${trx.id}')">Hapus</button></td>
+      </tr>`).join('') || `<tr><td colspan="12" class="empty">Data transaksi tidak ditemukan.</td></tr>`;
+  }
+
+  function renderAll() {
+    refreshSelects();
+    updateImpactInfo();
+    updatePhysicalPreview();
+    renderDashboard();
+    renderAccounts();
+    renderAdjustments();
+    renderTransactions();
+  }
+
+  function addTransaction(trx) {
+    DATA.transactions.unshift({ id: uid('TRX'), ...trx });
+    saveData();
+    renderAll();
+    showToast('Transaksi berhasil disimpan.');
+  }
+
+  function autoFillAccounts() {
+    const jenis = $('jenis').value;
+    const cash = getByRole('cash');
+    const brilink = getByRole('brilink');
+    const pulsa = getByRole('pulsa');
+    const wallet = getByRole('wallet');
+    const voucher = getByRole('voucher');
+    const accessory = getByRole('accessory');
+    const physical = getByRole('physical');
+
+    const set = (keluar, masuk, admin) => {
+      if ($('akunKeluar')) $('akunKeluar').value = keluar || '';
+      if ($('akunMasuk')) $('akunMasuk').value = masuk || '';
+      if ($('akunAdmin')) $('akunAdmin').value = admin || '';
+    };
+
+    if (jenis === 'Setor Tunai') set(cash, brilink, cash);
+    else if (jenis === 'Tarik Tunai') set(brilink, cash, cash);
+    else if (jenis.includes('Transfer') || jenis === 'Token PLN' || jenis === 'BPJS/PDAM') set(brilink, cash, cash);
+    else if (jenis === 'Pembelian Pulsa') set(pulsa, cash, cash);
+    else if (jenis === 'Top Up E-Wallet') set(wallet, cash, cash);
+    else if (jenis === 'Voucher Fisik' || jenis === 'Kartu Perdana') set(voucher || physical, cash, cash);
+    else if (jenis === 'Aksesoris HP') set(accessory || physical, cash, cash);
+    else if (jenis === 'Barang Toko Lainnya') set(physical, cash, cash);
+    else set('', '', cash);
+    updateImpactInfo();
+  }
+
+  function autoFillPhysicalAccounts() {
+    const kategori = $('fisikKategori').value;
+    const cash = getByRole('cash');
+    const voucher = getByRole('voucher');
+    const accessory = getByRole('accessory');
+    const physical = getByRole('physical');
+    if (kategori === 'Voucher Fisik' || kategori === 'Kartu Perdana') $('fisikAkunStok').value = voucher || physical || '';
+    else if (kategori === 'Aksesoris HP') $('fisikAkunStok').value = accessory || physical || '';
+    else $('fisikAkunStok').value = physical || accessory || voucher || '';
+    $('fisikAkunKas').value = cash || '';
+    updatePhysicalPreview();
+  }
+
+  function exportCsv() {
+    const header = ['Tanggal','Jenis','Pelanggan','Tujuan/Barang','Nominal Modal','Admin/Laba','Akun Keluar','Akun Masuk','Akun Admin','Status','Catatan'];
+    const rows = getFilteredTransactions().map((trx) => [
+      trx.tanggal, trx.jenis, trx.pelanggan || '', trx.tujuan || trx.namaBarang || '', trx.nominal, trx.admin,
+      accountName(trx.akunKeluar), accountName(trx.akunMasuk), accountName(trx.akunAdmin), trx.status, trx.catatan || ''
+    ]);
+    const csv = [header, ...rows].map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')).join('\n');
+    downloadFile('laporan-transaksi.csv', csv, 'text/csv');
+  }
+
+  function downloadFile(filename, content, type) {
+    const blob = new Blob([content], { type });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  window.editAccount = function(id) {
+    const account = DATA.accounts.find(a => a.id === id);
+    if (!account) return;
+    $('accountEditId').value = account.id;
+    $('accountName').value = account.name;
+    $('accountCategory').value = account.category;
+    $('accountInitial').value = account.initial;
+    $('accountRole').value = account.role || 'custom';
+    $('accountNote').value = account.note || '';
+    navigate('akun');
+  };
+
+  window.deleteAccount = function(id) {
+    if (!confirm('Hapus akun ini? Data transaksi lama tetap tersimpan, tetapi nama akun tidak akan tampil jika akun dihapus.')) return;
+    DATA.accounts = DATA.accounts.filter(a => a.id !== id);
+    saveData();
+    renderAll();
+    showToast('Akun berhasil dihapus.');
+  };
+
+  window.deleteTransaction = function(id) {
+    if (!confirm('Hapus transaksi ini?')) return;
+    DATA.transactions = DATA.transactions.filter(t => t.id !== id);
+    saveData();
+    renderAll();
+    showToast('Transaksi dihapus.');
+  };
+
+  window.deleteAdjustment = function(id) {
+    if (!confirm('Hapus mutasi ini?')) return;
+    DATA.adjustments = DATA.adjustments.filter(a => a.id !== id);
+    saveData();
+    renderAll();
+    showToast('Mutasi dihapus.');
+  };
+
+  function bindEvents() {
+    document.querySelectorAll('.nav-btn').forEach((button) => button.addEventListener('click', () => navigate(button.dataset.target)));
+    document.querySelectorAll('[data-jump]').forEach((button) => button.addEventListener('click', () => navigate(button.dataset.jump)));
+    ['nominal', 'admin', 'akunKeluar', 'akunMasuk', 'akunAdmin', 'jenis'].forEach(id => $(id)?.addEventListener('input', updateImpactInfo));
+    ['fisikQty', 'fisikModal', 'fisikJual', 'fisikKategori'].forEach(id => $(id)?.addEventListener('input', updatePhysicalPreview));
+    $('autoAccountBtn')?.addEventListener('click', autoFillAccounts);
+    $('autoPhysicalAccountBtn')?.addEventListener('click', autoFillPhysicalAccounts);
+
+    $('transactionForm')?.addEventListener('submit', (event) => {
+      event.preventDefault();
+      addTransaction({
+        tanggal: $('tanggal').value,
+        jenis: $('jenis').value,
+        pelanggan: $('pelanggan').value.trim(),
+        tujuan: $('tujuan').value.trim(),
+        nominal: number($('nominal').value),
+        admin: number($('admin').value),
+        akunKeluar: $('akunKeluar').value,
+        akunMasuk: $('akunMasuk').value,
+        akunAdmin: $('akunAdmin').value,
+        status: $('status').value,
+        catatan: $('catatan').value.trim(),
+        mode: ['Voucher Fisik','Aksesoris HP','Kartu Perdana','Barang Toko Lainnya'].includes($('jenis').value) ? 'fisik' : 'layanan'
+      });
+      event.target.reset();
+      setDefaultDates();
+    });
+
+    $('physicalForm')?.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const qty = Math.max(1, number($('fisikQty').value));
+      const modalSatuan = number($('fisikModal').value);
+      const jualSatuan = number($('fisikJual').value);
+      const totalModal = qty * modalSatuan;
+      const totalJual = qty * jualSatuan;
+      const laba = totalJual - totalModal;
+      if (!$('fisikAkunStok').value || !$('fisikAkunKas').value) {
+        showToast('Pilih akun stok keluar dan akun kas masuk terlebih dahulu.');
+        return;
+      }
+      if (laba < 0 && !confirm('Harga jual lebih kecil dari modal. Tetap simpan transaksi rugi?')) return;
+      addTransaction({
+        tanggal: $('fisikTanggal').value,
+        jenis: $('fisikKategori').value,
+        pelanggan: $('fisikPelanggan').value.trim(),
+        tujuan: $('fisikNamaBarang').value.trim(),
+        namaBarang: $('fisikNamaBarang').value.trim(),
+        qty,
+        modalSatuan,
+        jualSatuan,
+        nominal: totalModal,
+        admin: laba,
+        akunKeluar: $('fisikAkunStok').value,
+        akunMasuk: $('fisikAkunKas').value,
+        akunAdmin: $('fisikAkunKas').value,
+        status: $('fisikStatus').value,
+        catatan: $('fisikCatatan').value.trim() || `Qty ${qty} x ${rupiah(jualSatuan)}`,
+        mode: 'fisik'
+      });
+      event.target.reset();
+      $('fisikQty').value = 1;
+      setDefaultDates();
+      updatePhysicalPreview();
+    });
+
+    $('accountForm')?.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const editId = $('accountEditId').value;
+      const payload = {
+        name: $('accountName').value.trim(),
+        category: $('accountCategory').value,
+        initial: number($('accountInitial').value),
+        role: $('accountRole').value,
+        note: $('accountNote').value.trim()
+      };
+      if (!payload.name) return showToast('Nama akun wajib diisi.');
+      if (editId) {
+        const account = DATA.accounts.find(a => a.id === editId);
+        Object.assign(account, payload);
+        showToast('Akun berhasil diperbarui.');
+      } else {
+        DATA.accounts.push({ id: uid('ACC'), ...payload });
+        showToast('Akun berhasil dibuat.');
+      }
+      saveData();
+      event.target.reset();
+      $('accountEditId').value = '';
+      renderAll();
+    });
+
+    $('cancelAccountEditBtn')?.addEventListener('click', () => {
+      $('accountForm').reset();
+      $('accountEditId').value = '';
+    });
+
+    $('adjustmentForm')?.addEventListener('submit', (event) => {
+      event.preventDefault();
+      DATA.adjustments.unshift({
+        id: uid('ADJ'),
+        tanggal: $('adjTanggal').value,
+        accountId: $('adjAccount').value,
+        type: $('adjType').value,
+        amount: number($('adjAmount').value),
+        note: $('adjNote').value.trim()
+      });
+      saveData();
+      event.target.reset();
+      setDefaultDates();
+      renderAll();
+      showToast('Mutasi stok berhasil disimpan.');
+    });
+
+    $('transferForm')?.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const from = $('transferFrom').value;
+      const to = $('transferTo').value;
+      const amount = number($('transferAmount').value);
+      const tanggal = $('transferTanggal').value;
+      const note = $('transferNote').value.trim() || 'Transfer antar akun';
+      if (!from || !to) return showToast('Pilih akun asal dan tujuan.');
+      if (from === to) return showToast('Akun asal dan tujuan tidak boleh sama.');
+      DATA.adjustments.unshift({ id: uid('ADJ'), tanggal, accountId: from, type: 'transfer-out', amount, note: `${note} ke ${accountName(to)}` });
+      DATA.adjustments.unshift({ id: uid('ADJ'), tanggal, accountId: to, type: 'transfer-in', amount, note: `${note} dari ${accountName(from)}` });
+      saveData();
+      event.target.reset();
+      setDefaultDates();
+      renderAll();
+      showToast('Transfer antar akun berhasil disimpan.');
+    });
+
+    ['filterStart','filterEnd','filterJenis','filterStatus','filterAccount','filterSearch'].forEach(id => $(id)?.addEventListener('input', renderTransactions));
+    $('resetFilterBtn')?.addEventListener('click', () => {
+      ['filterStart','filterEnd','filterJenis','filterStatus','filterAccount','filterSearch'].forEach(id => { if ($(id)) $(id).value = ''; });
+      renderTransactions();
+    });
+    $('exportCsvBtn')?.addEventListener('click', exportCsv);
+    $('backupBtn')?.addEventListener('click', () => downloadFile('backup-agen-brilink.json', JSON.stringify(DATA, null, 2), 'application/json'));
+    $('exportJsonTopBtn')?.addEventListener('click', () => downloadFile('backup-agen-brilink.json', JSON.stringify(DATA, null, 2), 'application/json'));
+    $('restoreInput')?.addEventListener('change', (event) => {
+      const file = event.target.files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const parsed = JSON.parse(reader.result);
+          if (!Array.isArray(parsed.accounts) || !Array.isArray(parsed.transactions) || !Array.isArray(parsed.adjustments)) throw new Error('Format tidak sesuai');
+          DATA = parsed;
+          saveData();
+          renderAll();
+          showToast('Data berhasil direstore.');
+        } catch (error) {
+          showToast('File JSON tidak valid.');
+        }
+      };
+      reader.readAsText(file);
+    });
+    $('resetAppBtn')?.addEventListener('click', () => {
+      if (!confirm('Reset semua data aplikasi?')) return;
+      DATA = structuredClone(DEFAULT_DATA);
+      saveData();
+      renderAll();
+      showToast('Data aplikasi berhasil direset.');
+    });
+    $('clearTransactionsBtn')?.addEventListener('click', () => {
+      if (!confirm('Hapus semua transaksi?')) return;
+      DATA.transactions = [];
+      saveData();
+      renderAll();
+      showToast('Semua transaksi dihapus.');
+    });
+    $('clearAdjustmentsBtn')?.addEventListener('click', () => {
+      if (!confirm('Hapus semua mutasi stok?')) return;
+      DATA.adjustments = [];
+      saveData();
+      renderAll();
+      showToast('Semua mutasi stok dihapus.');
+    });
+  }
+
+  function seedDefaultAccounts() {
+    if (DATA.accounts.length > 0) return;
+    DATA.accounts = [
+      { id: uid('ACC'), name: 'Kas Laci', category: 'Kas', initial: 0, role: 'cash', note: 'Uang tunai toko' },
+      { id: uid('ACC'), name: 'Saldo BRILink', category: 'Saldo Bank/BRILink', initial: 0, role: 'brilink', note: 'Saldo utama BRILink' },
+      { id: uid('ACC'), name: 'Stok Pulsa', category: 'Pulsa/Voucher', initial: 0, role: 'pulsa', note: 'Stok pulsa utama' },
+      { id: uid('ACC'), name: 'Stok Voucher Fisik', category: 'Stok Voucher Fisik', initial: 0, role: 'voucher', note: 'Voucher fisik dan kartu perdana' },
+      { id: uid('ACC'), name: 'Stok Aksesoris', category: 'Stok Aksesoris', initial: 0, role: 'accessory', note: 'Charger, headset, kabel, casing, dan aksesoris lain' }
+    ];
+    saveData();
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    seedDefaultAccounts();
+    setDefaultDates();
+    bindEvents();
+    refreshSelects();
+    autoFillAccounts();
+    autoFillPhysicalAccounts();
+    renderAll();
+  });
+
+  </script>
+</body>
+</html>
